@@ -7,13 +7,19 @@ Not a new Boutiques, CWL, or MCP.
 ## Go
 
 ```bash
-git clone https://github.com/phindagijimana/scicap.git
-cd scicap && pip install -e .
+pip install git+https://github.com/phindagijimana/scicap.git
 scicap invoke packages/scicap-neuro/capabilities/neuro.t1.hippocampal_volumes.yaml \
   --instance examples/instances/complete_t1w.json
 ```
 
+```python
+from scicap import invoke
+invoke("cap.yaml", "instance.json")
+```
+
 Python 3.11+. No model API. `--approve` records approval only — no container pull.
+
+Optional agent transport (same `invoke`; not a Coala/Nipoppy product): `python -m scicap.mcp`
 
 ```bash
 pytest tests

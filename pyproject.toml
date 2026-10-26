@@ -21,7 +21,7 @@ scicap = "scicap_core.cli:main"
 
 [tool.setuptools]
 include-package-data = true
-packages = ["scicap_core"]
+packages = ["scicap_core", "scicap"]
 
 [tool.setuptools.package-dir]
 scicap_core = "packages/scicap-core"

@@ -112,4 +112,4 @@ Required predicates for v0: `modality`, `space`. Atlas is required only when the
 - Capability YAML still carries M4 disclosure fields.
 - `pytest` green with no model API.
 
-Stop. Do not implement MCP adapters or the full M3 arm matrix until the go-gate in methods §5 is re-read.
+Stop. Do not implement the full M3 arm matrix until the go-gate in methods §5 is re-read. Optional `python -m scicap.mcp` may only call `invoke`. It is not a Coala/Nipoppy product and is not the paper.
