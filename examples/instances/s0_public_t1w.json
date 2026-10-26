@@ -1,0 +1,14 @@
+{
+  "instance_id": "s0.public_t1w",
+  "gold": "ALLOW",
+  "dataset": "ds000003",
+  "doi": "10.18112/openneuro.ds000003.v1.0.0",
+  "subject": "sub-01",
+  "path": "../shared/data/external/ds000003/sub-01/anat/sub-01_T1w.nii.gz",
+  "bytes_in_git": false,
+  "modality": "T1w",
+  "space": "subject_native",
+  "format": "nifti",
+  "qc_status": "unknown",
+  "note": "Points at fetched S0 T1w. Bytes stay outside git. Pytest does not download."
+}

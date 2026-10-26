@@ -15,6 +15,7 @@ dependencies = [
 
 [project.optional-dependencies]
 dev = ["pytest>=8.0"]
+live = ["boutiques"]
 
 [project.scripts]
 scicap = "scicap_core.cli:main"

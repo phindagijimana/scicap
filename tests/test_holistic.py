@@ -96,11 +96,15 @@ def test_model_api_key_unset() -> None:
 
 
 def test_no_nifti_in_scicap_or_shared() -> None:
-    roots = (ROOT, SHARED)
+    """NIfTI may exist under gitignored shared/data/external/ after an opt-in fetch."""
+    external = (SHARED / "data" / "external").resolve()
     hits = []
-    for root in roots:
+    for root in (ROOT, SHARED):
         for path in root.rglob("*"):
             if not path.is_file():
+                continue
+            resolved = path.resolve()
+            if resolved == external or external in resolved.parents:
                 continue
             name = path.name.lower()
             if name.endswith(".nii") or name.endswith(".nii.gz"):

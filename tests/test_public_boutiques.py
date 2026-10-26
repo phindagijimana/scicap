@@ -27,7 +27,11 @@ INSTANCES = {
 def _no_scicap_decision(result: dict) -> None:
     assert "decision" not in result
     assert SCICAP_DECISIONS.isdisjoint(result.keys())
-    assert result["used_boutiques_pypi"] is False
+    assert SCICAP_DECISIONS.isdisjoint(
+        {value for value in result.values() if isinstance(value, str)}
+    )
+    assert result["baseline_mode"] in {"live", "recorded"}
+    assert result["download_in_pytest"] is False
 
 
 def test_descriptor_has_no_scicap_fields() -> None:

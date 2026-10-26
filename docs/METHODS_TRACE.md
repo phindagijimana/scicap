@@ -19,7 +19,7 @@ Locked protocol: [`SciCap_Methods.md`](SciCap_Methods.md) (M1–M4). This file c
 
 **M2.** Boutiques invocation schema is binary: required typed inputs present → invocable. Coala and Nipoppy MCP inherit that binary. They do not return `ALLOW` / `REJECT` / `ABSTAIN`. Missing `space` is not an invocation miss. Comment in `packages/scicap-core/invoke.py`: `# M2 residual vs Boutiques:`.
 
-**M3.** `packages/scicap-neuro/boutiques/neuro.t1.hippocampal_volumes.boutiques.json` is the matched Boutiques-only encoding (arm C). Same T1w file fact; no SciCap keys. The `boutiques` PyPI package is not installed here; the baseline implements the recorded 0.5 invocation-schema contract from that JSON.
+**M3.** `packages/scicap-neuro/boutiques/neuro.t1.hippocampal_volumes.boutiques.json` is the matched Boutiques-only encoding (arm C). Same T1w file fact; no SciCap keys. Wave 5 calls installed Boutiques when `import boutiques` works (`baseline_mode: live`); otherwise the recorded 0.5 invocation-schema contract (`baseline_mode: recorded`).
 
 **M4.** ToolUniverse silent-failure audit ([arXiv:2609.26836](https://arxiv.org/abs/2609.26836)) is the prior: a zero exit is not a scientific success. Residual lives on the capability YAML (`unsupported_cases`, `qc_required`, `qc_status`, `output_completeness`, `interpretation_limits`) and on the invoke result. v0 never executes the container.
 
@@ -29,4 +29,18 @@ Boutiques does **not** already decide the four v0 cases as `ALLOW` / `REJECT` / 
 
 ## Field audit (wave 3)
 
-Re-checked against the Boutiques-only descriptor (`packages/scicap-neuro/boutiques/neuro.t1.hippocampal_volumes.boutiques.json`) and the recorded-or-real baseline (`packages/scicap-core/boutiques_baseline.py`). The `boutiques` PyPI package is not installed in this environment; the baseline stays `baseline_mode: recorded`. Boutiques File/type checks still accept complete T1w, omitted `space`, DK-as-DKT, and DWI-as-File. They still do not return `ALLOW` / `REJECT` / `ABSTAIN`. Nipoppy MCP is not present in this tree and was not found to encode `space` / `atlas` as invoke decisions. The four v0 cases remain a SciCap residual. Fields are not offered upstream.
+Re-checked against the Boutiques-only descriptor (`packages/scicap-neuro/boutiques/neuro.t1.hippocampal_volumes.boutiques.json`) and the recorded-or-real baseline (`packages/scicap-core/boutiques_baseline.py`). Wave 3 ran without the PyPI package. Wave 5 (below) updates the install state.
+
+## Wave 5 (toward production)
+
+`pip install boutiques` from PyPI succeeded in this environment: `boutiques` 0.5.33 imports. The baseline calls `boutiques.validator.validate_descriptor` and `boutiques.invocationSchemaHandler.validateSchema` on `packages/scicap-neuro/boutiques/neuro.t1.hippocampal_volumes.boutiques.json` (no container launch, no image pull) and sets `baseline_mode: live`. If `import boutiques` fails, the same module keeps `baseline_mode: recorded`.
+
+Installed Boutiques 0.5 input types remain `String` / `File` / `Flag` / `Number`. The shipped schema has no `atlas`, `ALLOW`, `REJECT`, `ABSTAIN`, `qc_status`, or `modality` keys. Occurrences of the word “space” are list-separator defaults and `disk-space`, not BIDS reference space. Live File/invocation checks still accept complete T1w, omitted `space`, DK-as-DKT, and DWI-as-File. They still do not return `ALLOW` / `REJECT` / `ABSTAIN`. Nipoppy MCP is not present in this tree. Fields are not offered upstream. Pytest uses JSON sidecars only; OpenNeuro bytes are not downloaded.
+
+No confirmatory rates are claimed.
+
+## Wave 6 (fetched S0)
+
+Public T1w bytes are on disk at `shared/data/external/ds000003/sub-01/anat/sub-01_T1w.nii.gz` after `shared/scripts/fetch_s0.py --i-accept-public-data` (OpenNeuro S3). The file is gzip (`\x1f\x8b`), about 5.7 MB, not a 140-byte git-annex pointer. `packages/scicap-core/s0.py` locates that path and treats annex/LFS stand-ins as absent. `benchmarks/pilot-v0/tasks.yaml` now includes tasks that **point at that path**. Bytes are not copied into `01_SciCap/`. `bytes_in_git` stays false. Pytest does not download. Holdout stays empty of tasks.
+
+SciCap still returns `ALLOW` / `REJECT` / `ABSTAIN`. The Boutiques-only baseline still does not emit those tokens. The container is not executed. No confirmatory rates are claimed.

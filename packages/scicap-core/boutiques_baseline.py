@@ -4,10 +4,11 @@ Reuses the Boutiques 0.5 descriptor as identity / CLI / container substrate
 (Glatard et al., 2018). This module does **not** return ALLOW / REJECT / ABSTAIN.
 
 If ``import boutiques`` works, the installed package is called on the
-Boutiques-only descriptor (descriptor validation only; no container launch).
+Boutiques-only descriptor (descriptor and invocation-schema validation only;
+no container launch; no OpenNeuro download) and ``baseline_mode`` is ``live``.
 Otherwise this module keeps the recorded Boutiques 0.5 invocation-schema
-contract and sets ``baseline_mode: recorded``. Do not claim Boutiques-on-PyPI
-was executed unless ``used_boutiques_pypi`` is true.
+contract and sets ``baseline_mode: recorded``. Do not claim a live Boutiques
+call unless ``used_boutiques_pypi`` is true.
 """
 
 from __future__ import annotations
@@ -213,33 +214,51 @@ def validate_invocation(
     return reasons
 
 
-def _call_boutiques_pypi(descriptor_path: Path) -> dict[str, Any] | None:
+def _call_boutiques_live(
+    descriptor_path: Path,
+    invocation: dict[str, Any],
+) -> dict[str, Any] | None:
     """Call installed Boutiques on the descriptor. None if not installed.
 
-    Descriptor validation only. Do not launch a container or pull an image.
+    Descriptor and invocation-schema validation only. Do not launch a
+    container, pull an image, or download OpenNeuro.
     """
     if not boutiques_pypi_installed():
         return None
     extra: dict[str, Any] = {
-        "baseline_mode": "boutiques-pypi",
+        "baseline_mode": "live",
         "used_boutiques_pypi": True,
         "boutiques_pypi_installed": True,
-        "contract": "boutiques-pypi-descriptor-validate",
+        "contract": "boutiques-0.5-pypi-descriptor-and-invocation",
+        "download_in_pytest": False,
     }
     try:
-        import boutiques
+        from boutiques.invocationSchemaHandler import (
+            generateInvocationSchema,
+            validateSchema,
+        )
+        from boutiques.validator import validate_descriptor
 
-        if hasattr(boutiques, "validate"):
-            boutiques.validate(str(descriptor_path))
-            extra["boutiques_call"] = "boutiques.validate"
-        else:
-            from boutiques.validator import validate_descriptor
-
-            validate_descriptor(str(descriptor_path))
-            extra["boutiques_call"] = "boutiques.validator.validate_descriptor"
-    except Exception as exc:  # recorded-or-real: keep invocability from recorded
+        descriptor = load_descriptor(descriptor_path)
+        validate_descriptor(descriptor, descriptor_path=str(descriptor_path))
+        extra["descriptor_valid"] = True
+        schema = generateInvocationSchema(descriptor)
+        validateSchema(schema, invocation)
+        extra["invocation_valid"] = True
+        extra["boutiques_call"] = "validate_descriptor+validateSchema"
+        extra["boutiques_invocable"] = True
+    except Exception as exc:
         extra["boutiques_pypi_error"] = str(exc)
-        extra["boutiques_call"] = "failed"
+        extra["boutiques_call"] = extra.get("boutiques_call", "failed")
+        extra.setdefault("descriptor_valid", False)
+        extra.setdefault("invocation_valid", False)
+        try:
+            from boutiques import InvocationValidationError
+        except ImportError:  # pragma: no cover - package present if we got here
+            InvocationValidationError = ()  # type: ignore[misc,assignment]
+        if isinstance(exc, InvocationValidationError):
+            extra["boutiques_invocable"] = False
+            extra["live_invocation_error"] = str(exc)
     return extra
 
 
@@ -272,14 +291,18 @@ def check_invocable(
         "used_boutiques_pypi": False,
         "boutiques_pypi_installed": boutiques_pypi_installed(),
         "baseline_mode": "recorded",
+        "download_in_pytest": False,
         "file_type_rule": FILE_TYPE_RULE,
         "scicap_fields_in_descriptor": baked,
     }
-    live = _call_boutiques_pypi(descriptor_path)
+    live = _call_boutiques_live(descriptor_path, invocation)
     if live:
         result.update(live)
     if any(key in result for key in SCICAP_DECISIONS):
         raise RuntimeError("Boutiques baseline must not use SciCap decision keys")
     if result.get("decision") in SCICAP_DECISIONS:
         raise RuntimeError("Boutiques baseline must not return a SciCap decision")
+    for value in result.values():
+        if isinstance(value, str) and value in SCICAP_DECISIONS:
+            raise RuntimeError("Boutiques baseline must not emit a SciCap decision")
     return result

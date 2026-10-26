@@ -20,9 +20,11 @@ def test_baseline_mode_recorded_or_real() -> None:
     assert "decision" not in result
     assert SCICAP_DECISIONS.isdisjoint(result.keys())
     if boutiques_pypi_installed():
-        assert result["baseline_mode"] == "boutiques-pypi"
+        assert result["baseline_mode"] == "live"
         assert result["used_boutiques_pypi"] is True
+        assert "validate_descriptor" in result.get("boutiques_call", "")
     else:
         assert result["baseline_mode"] == "recorded"
         assert result["used_boutiques_pypi"] is False
     assert result["boutiques_invocable"] is True
+    assert result["download_in_pytest"] is False

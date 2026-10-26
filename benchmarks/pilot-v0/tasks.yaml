@@ -77,3 +77,40 @@ tasks:
     instance: examples/instances/dk_as_dkt.json
     gold: REJECT
     method: M1
+  # Wave 6: point at fetched S0 T1w. Do not copy NIfTI. Holdout stays empty.
+  - id: pilot-s0-public-t1w
+    capability: neuro.t1.hippocampal_volumes
+    instance: examples/instances/s0_public_t1w.json
+    t1w: ../shared/data/external/ds000003/sub-01/anat/sub-01_T1w.nii.gz
+    gold: ALLOW
+    method: M1
+    s0: true
+  - id: pilot-s0-public-missing-space
+    capability: neuro.t1.hippocampal_volumes
+    instance: examples/instances/s0_public_missing_space.json
+    t1w: ../shared/data/external/ds000003/sub-01/anat/sub-01_T1w.nii.gz
+    gold: ABSTAIN
+    method: M2
+    s0: true
+  - id: pilot-s0-public-seg
+    capability: neuro.t1.anatomical_segmentation
+    instance: examples/instances/s0_public_t1w.json
+    t1w: ../shared/data/external/ds000003/sub-01/anat/sub-01_T1w.nii.gz
+    gold: ALLOW
+    method: M1
+    s0: true
+  - id: pilot-s0-public-register
+    capability: neuro.t1.register
+    instance: examples/instances/s0_public_t1w.json
+    t1w: ../shared/data/external/ds000003/sub-01/anat/sub-01_T1w.nii.gz
+    gold: ALLOW
+    method: M1
+    s0: true
+  - id: pilot-s0-public-bids
+    capability: neuro.bids.validate
+    instance: examples/instances/s0_public_bids.json
+    bids_root: ../shared/data/external/ds000003
+    t1w: ../shared/data/external/ds000003/sub-01/anat/sub-01_T1w.nii.gz
+    gold: ALLOW
+    method: M1
+    s0: true

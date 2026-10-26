@@ -1,0 +1,16 @@
+{
+  "instance_id": "s0.public_bids",
+  "gold": "ALLOW",
+  "dataset": "ds000003",
+  "doi": "10.18112/openneuro.ds000003.v1.0.0",
+  "subject": "sub-01",
+  "path": "../shared/data/external/ds000003",
+  "bids_root": "../shared/data/external/ds000003",
+  "kind": "bids_dataset",
+  "format": "bids",
+  "bytes_in_git": false,
+  "modality": "T1w",
+  "space": "subject_native",
+  "qc_status": "unknown",
+  "note": "Points at fetched S0 BIDS tree. NIfTI stays outside git. Pytest does not download."
+}

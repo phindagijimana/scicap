@@ -17,7 +17,7 @@ from scicap import invoke
 invoke("cap.yaml", "instance.json")
 ```
 
-Python 3.11+. No model API. `--approve` records approval only — no container pull.
+Python 3.11+. No model API. `--approve` records approval only — no container pull. If `boutiques` is installed, the public baseline is `baseline_mode: live`; otherwise `recorded`. Pytest does not download OpenNeuro.
 
 Optional agent transport (same `invoke`; not a Coala/Nipoppy product): `python -m scicap.mcp`
 
