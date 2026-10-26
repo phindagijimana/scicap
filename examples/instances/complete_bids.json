@@ -1,0 +1,15 @@
+{
+  "instance_id": "s0.complete_bids",
+  "gold": "ALLOW",
+  "dataset": "ds000003",
+  "doi": "10.18112/openneuro.ds000003.v1.0.0",
+  "subject": "sub-01",
+  "path": "ds000003",
+  "kind": "bids_dataset",
+  "format": "bids",
+  "bytes_in_git": false,
+  "modality": "T1w",
+  "space": "subject_native",
+  "qc_status": "unknown",
+  "note": "BIDS tree pointer only. NIfTI bytes are not in git."
+}

@@ -1,0 +1,15 @@
+{
+  "instance_id": "s0.complete_dkt",
+  "gold": "ALLOW",
+  "dataset": "synthetic",
+  "subject": "sub-01",
+  "path": "derivatives/labels/sub-01_space-T1w_atlas-DKT_dseg.nii.gz",
+  "bytes_in_git": false,
+  "modality": "T1w",
+  "space": "subject_native",
+  "atlas": "DKT",
+  "label_set": "DKT",
+  "format": "nifti",
+  "qc_status": "unknown",
+  "note": "Matching DKT declaration and label set. Path is a pointer; no NIfTI in git."
+}

@@ -1,0 +1,52 @@
+# SciCap profile (M1, M2, M4). Not a new validator. Pin is BIDS Validator 3.0.2.
+# M1: capability predicates; bind instance fields at invoke time.
+# M2: invoke returns ALLOW | REJECT | ABSTAIN.
+# M4: silent-failure disclosures; exit 0 is not scientific success.
+id: neuro.bids.validate
+version: 0.1.0
+purpose: Validate a BIDS dataset tree
+task_taxonomy: bids.validation
+intended_use: research_only
+exclusions:
+  - clinical_diagnosis
+  - bytes_absent_treated_as_valid
+input:
+  kind: bids_dataset
+  format: bids
+  # space/modality here are not defaults to infer (M1). Bind from the instance.
+preconditions:
+  - bids_root_declared
+  - validator_pin_available
+output:
+  kind: bids_validator_report
+  output_completeness: unknown
+unsupported_cases:
+  - non_bids_directory
+  - nifti_bytes_absent_from_machine
+  - validator_version_other_than_3_0_2
+qc_required: true
+qc_status: unknown
+interpretation_limits:
+  - validator_pass_is_not_scientific_success
+  - pin_is_bids_validator_3_0_2
+  - missing_space_is_not_filled_from_this_capability
+invoke_decisions:
+  ALLOW: required predicates established and approval granted
+  REJECT: demonstrated contradiction (wrong modality, space, or atlas)
+  ABSTAIN: instance metadata insufficient to bind required predicates
+validation:
+  - input_schema_passed
+  - bids_validator_3_0_2
+  - qc_status_passed
+execution:
+  approval_required: true
+  validator: "bids-validator@3.0.2"
+  backend: local
+provenance:
+  required:
+    - parameters
+    - software_versions
+    - input_hashes
+    - execution_id
+    - invoke_decision
+    - qc_status

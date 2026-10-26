@@ -1,0 +1,27 @@
+{
+  "name": "hippocampal_volumes",
+  "tool-version": "0.1.0",
+  "schema-version": "0.5",
+  "description": "Estimate hippocampal volumes from a T1w NIfTI. Boutiques-only baseline (M3 arm C): identity, CLI, and container. No SciCap space/atlas/QC/abstain fields.",
+  "command-line": "hippocampal_volumes [T1W] [OUTPUT]",
+  "container-image": {
+    "type": "docker",
+    "image": "ghcr.io/neurodesk/neurodesktop/neurodesktop:2026-06-09"
+  },
+  "inputs": [
+    {
+      "id": "t1w",
+      "name": "T1w image",
+      "type": "File",
+      "value-key": "[T1W]",
+      "optional": false
+    },
+    {
+      "id": "output",
+      "name": "Output directory",
+      "type": "String",
+      "value-key": "[OUTPUT]",
+      "optional": false
+    }
+  ]
+}

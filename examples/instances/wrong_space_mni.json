@@ -1,0 +1,13 @@
+{
+  "instance_id": "s0.wrong_space_mni",
+  "gold": "REJECT",
+  "dataset": "synthetic",
+  "subject": "sub-01",
+  "path": "derivatives/sub-01_space-MNI152NLin2009cAsym_T1w.nii.gz",
+  "bytes_in_git": false,
+  "modality": "T1w",
+  "space": "MNI152NLin2009cAsym",
+  "format": "nifti",
+  "qc_status": "unknown",
+  "note": "T1w already in template space offered to a subject-native register capability. Pointer only; no NIfTI in git."
+}

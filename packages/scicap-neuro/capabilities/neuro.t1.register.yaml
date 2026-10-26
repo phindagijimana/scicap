@@ -1,0 +1,55 @@
+# SciCap profile (M1, M2, M4). Registration of T1w; not a workflow engine.
+# M1: capability predicates; bind space/modality to the instance at invoke time.
+# M2: invoke returns ALLOW | REJECT | ABSTAIN.
+# M4: silent-failure disclosures; exit 0 is not scientific success.
+id: neuro.t1.register
+version: 0.1.0
+purpose: Register subject-native T1w MRI to a declared target space
+task_taxonomy: registration.t1_to_template
+modality: T1w
+intended_use: research_only
+exclusions:
+  - clinical_diagnosis
+  - already_in_target_space_without_declared_transform
+input:
+  kind: structural_mri
+  modality: T1w
+  format: nifti
+  space: subject_native
+  # space here is the moving-image space when bound, not a default to infer (M1).
+preconditions:
+  - anatomical_image_available
+  - target_space_declared
+output:
+  kind: spatial_transform
+  output_completeness: unknown
+unsupported_cases:
+  - moving_image_already_in_template_space
+  - dwi_or_functional_offered_as_t1w
+  - missing_target_template
+qc_required: true
+qc_status: unknown
+interpretation_limits:
+  - do_not_treat_unreviewed_warp_as_identity
+  - research_use_only
+  - exit_0_is_not_qc_passed
+invoke_decisions:
+  ALLOW: required predicates established and approval granted
+  REJECT: demonstrated contradiction (wrong modality, space, or atlas)
+  ABSTAIN: instance metadata insufficient to bind space
+validation:
+  - input_schema_passed
+  - transform_recorded
+  - qc_status_passed
+execution:
+  approval_required: true
+  container: ghcr.io/neurodesk/neurodesktop/neurodesktop:2026-06-09@sha256:72a16811e1243a4838f5d8a9a98dc992affa6864e920ac99c31033a42b22fb8d
+  backend: local_container
+provenance:
+  required:
+    - parameters
+    - software_versions
+    - input_hashes
+    - execution_id
+    - invoke_decision
+    - qc_status

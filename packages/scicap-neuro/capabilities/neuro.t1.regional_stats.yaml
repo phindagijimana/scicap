@@ -1,0 +1,57 @@
+# SciCap profile (M1, M2, M4). Regional statistics; not volume invention.
+# M1: capability predicates; bind space/atlas/modality to the instance at invoke time.
+# M2: invoke returns ALLOW | REJECT | ABSTAIN.
+# M4: silent-failure disclosures; exit 0 is not scientific success.
+id: neuro.t1.regional_stats
+version: 0.1.0
+purpose: Compute regional statistics on a T1w anatomical parcellation
+task_taxonomy: morphometry.regional_statistics
+modality: T1w
+intended_use: research_only
+exclusions:
+  - clinical_diagnosis
+  - incomplete_segmentation_reported_as_biological_zero
+input:
+  kind: anatomical_parcellation
+  modality: T1w
+  format: nifti
+  space: subject_native
+  atlas: DKT
+  # space/atlas here are required values when bound, not defaults to infer (M1).
+preconditions:
+  - compatible_label_image_available
+  - atlas_declared_when_labels_claimed
+output:
+  kind: regional_statistic_table
+  units: mm3
+  output_completeness: unknown
+unsupported_cases:
+  - missing_region_labels_after_segmentation
+  - dk_labels_declared_as_dkt
+  - incomplete_segmentation_without_qc
+qc_required: true
+qc_status: unknown
+interpretation_limits:
+  - do_not_treat_missing_regions_as_biological_zero
+  - research_use_only
+  - exit_0_is_not_qc_passed
+invoke_decisions:
+  ALLOW: required predicates established and approval granted
+  REJECT: demonstrated contradiction (wrong modality, space, or atlas)
+  ABSTAIN: instance metadata insufficient to bind space or atlas
+validation:
+  - input_schema_passed
+  - output_regions_present
+  - qc_status_passed
+execution:
+  approval_required: true
+  container: ghcr.io/neurodesk/neurodesktop/neurodesktop:2026-06-09@sha256:72a16811e1243a4838f5d8a9a98dc992affa6864e920ac99c31033a42b22fb8d
+  backend: local_container
+provenance:
+  required:
+    - parameters
+    - software_versions
+    - input_hashes
+    - execution_id
+    - invoke_decision
+    - qc_status

@@ -1,0 +1,79 @@
+# Pilot-v0 task list. Do not tune contracts on the holdout.
+# No results claimed. Gold labels are method fixtures, not evaluation numbers.
+
+schema_version: 0.1
+capability: neuro.t1.hippocampal_volumes
+holdout_tuning: forbidden
+capabilities:
+  - neuro.t1.hippocampal_volumes
+  - neuro.bids.validate
+  - neuro.t1.anatomical_segmentation
+  - neuro.t1.register
+  - neuro.t1.regional_stats
+
+tasks:
+  - id: pilot-complete-t1w
+    capability: neuro.t1.hippocampal_volumes
+    instance: examples/instances/complete_t1w.json
+    gold: ALLOW
+    method: M1
+  - id: pilot-dk-as-dkt
+    capability: neuro.t1.hippocampal_volumes
+    instance: examples/instances/dk_as_dkt.json
+    gold: REJECT
+    method: M1
+  - id: pilot-missing-space
+    capability: neuro.t1.hippocampal_volumes
+    instance: examples/instances/missing_space.json
+    gold: ABSTAIN
+    method: M2
+  - id: pilot-wrong-modality
+    capability: neuro.t1.hippocampal_volumes
+    instance: examples/instances/wrong_modality.json
+    gold: REJECT
+    method: M1
+  - id: pilot-bids-validate-complete
+    capability: neuro.bids.validate
+    instance: examples/instances/complete_bids.json
+    gold: ALLOW
+    method: M1
+  - id: pilot-bids-validate-missing-space
+    capability: neuro.bids.validate
+    instance: examples/instances/missing_space.json
+    gold: ABSTAIN
+    method: M2
+  - id: pilot-seg-complete
+    capability: neuro.t1.anatomical_segmentation
+    instance: examples/instances/complete_t1w.json
+    gold: ALLOW
+    method: M1
+  - id: pilot-seg-wrong-modality
+    capability: neuro.t1.anatomical_segmentation
+    instance: examples/instances/wrong_modality.json
+    gold: REJECT
+    method: M1
+  - id: pilot-register-complete
+    capability: neuro.t1.register
+    instance: examples/instances/complete_t1w.json
+    gold: ALLOW
+    method: M1
+  - id: pilot-register-missing-space
+    capability: neuro.t1.register
+    instance: examples/instances/missing_space.json
+    gold: ABSTAIN
+    method: M2
+  - id: pilot-register-wrong-space
+    capability: neuro.t1.register
+    instance: examples/instances/wrong_space_mni.json
+    gold: REJECT
+    method: M1
+  - id: pilot-stats-complete
+    capability: neuro.t1.regional_stats
+    instance: examples/instances/complete_dkt.json
+    gold: ALLOW
+    method: M1
+  - id: pilot-stats-dk-as-dkt
+    capability: neuro.t1.regional_stats
+    instance: examples/instances/dk_as_dkt.json
+    gold: REJECT
+    method: M1

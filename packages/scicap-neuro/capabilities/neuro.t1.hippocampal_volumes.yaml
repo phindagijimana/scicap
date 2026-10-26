@@ -1,0 +1,55 @@
+# Illustrative SciCap profile (Paper 1 methods M1, M2, M4). Not a production schema.
+# M1: capability predicates; bind space/modality to the instance at invoke time.
+# M2: invoke returns ALLOW | REJECT | ABSTAIN.
+# M4: silent-failure disclosures; exit 0 is not scientific success.
+id: neuro.t1.hippocampal_volumes
+version: 0.1.0
+purpose: Estimate hippocampal volumes from T1w MRI
+task_taxonomy: morphometry.regional_volume
+modality: T1w
+intended_use: research_only
+exclusions:
+  - clinical_diagnosis
+  - lesion_masked_anatomy_without_review
+input:
+  kind: structural_mri
+  modality: T1w
+  format: nifti
+  space: subject_native
+  # space/atlas here are required values when bound, not defaults to infer (M1).
+preconditions:
+  - anatomical_image_available
+  - compatible_segmentation_environment
+output:
+  kind: regional_volume_table
+  units: mm3
+  output_completeness: unknown
+unsupported_cases:
+  - lesion_or_resection_distorting_medial_temporal_anatomy
+  - missing_hippocampal_labels_after_segmentation
+qc_required: true
+qc_status: unknown
+interpretation_limits:
+  - do_not_treat_missing_regions_as_biological_zero
+  - research_use_only
+invoke_decisions:
+  ALLOW: required predicates established and approval granted
+  REJECT: demonstrated contradiction (wrong modality, space, or atlas)
+  ABSTAIN: instance metadata insufficient to bind space or QC
+validation:
+  - input_schema_passed
+  - output_regions_present
+  - qc_status_passed
+execution:
+  approval_required: true
+  container: image@sha256:<pinned_digest>
+  backend: local_container
+provenance:
+  required:
+    - parameters
+    - software_versions
+    - input_hashes
+    - execution_id
+    - invoke_decision
+    - qc_status
+

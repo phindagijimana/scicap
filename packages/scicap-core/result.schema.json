@@ -1,0 +1,41 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://scicap.local/schemas/invoke-result.json",
+  "title": "SciCap invoke result",
+  "type": "object",
+  "additionalProperties": true,
+  "required": [
+    "capability_id",
+    "decision",
+    "bound",
+    "missing",
+    "reason",
+    "qc_status",
+    "approval_required"
+  ],
+  "properties": {
+    "capability_id": { "type": "string", "minLength": 1 },
+    "decision": { "type": "string", "enum": ["ALLOW", "REJECT", "ABSTAIN"] },
+    "bound": {
+      "type": "object",
+      "properties": {
+        "modality": { "type": ["string", "null"] },
+        "space": { "type": ["string", "null"] },
+        "atlas": { "type": ["string", "null"] },
+        "units": { "type": ["string", "null"] },
+        "value_type": { "type": ["string", "null"] },
+        "kind": { "type": ["string", "null"] }
+      }
+    },
+    "missing": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "reason": { "type": "string", "minLength": 1 },
+    "reason_code": { "type": "string" },
+    "qc_status": { "type": "string" },
+    "approval_required": { "type": "boolean" },
+    "approval_granted": { "type": "boolean" },
+    "executed": { "type": "boolean" }
+  }
+}
