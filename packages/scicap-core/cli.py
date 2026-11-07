@@ -5,9 +5,26 @@ from __future__ import annotations
 import argparse
 import json
 import sys
+from pathlib import Path
 from typing import Sequence
 
 from .invoke import invoke
+
+_BUNDLED_CAPABILITIES = Path(__file__).resolve().parent / "capabilities"
+_SOURCE_CAPABILITIES = (
+    Path(__file__).resolve().parents[1] / "scicap-neuro" / "capabilities"
+)
+
+
+def resolve_capability(value: str) -> str:
+    """A capability YAML path, or a bundled capability id such as neuro.t1.register."""
+    if Path(value).is_file():
+        return value
+    for folder in (_BUNDLED_CAPABILITIES, _SOURCE_CAPABILITIES):
+        candidate = folder / f"{value}.yaml"
+        if candidate.is_file():
+            return str(candidate)
+    return value
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -17,7 +34,9 @@ def build_parser() -> argparse.ArgumentParser:
     )
     sub = parser.add_subparsers(dest="command", required=True)
     invoke_p = sub.add_parser("invoke", help="Decide whether a capability may be invoked.")
-    invoke_p.add_argument("capability", help="Path to capability YAML")
+    invoke_p.add_argument(
+        "capability", help="Path to capability YAML, or a bundled capability id"
+    )
     invoke_p.add_argument("--instance", required=True, help="Path to instance JSON sidecar")
     invoke_p.add_argument(
         "--approve",
@@ -36,7 +55,9 @@ def main(argv: Sequence[str] | None = None) -> int:
     if args.command != "invoke":
         parser.error("only invoke is implemented")
     try:
-        result = invoke(args.capability, args.instance, approve=args.approve)
+        result = invoke(
+            resolve_capability(args.capability), args.instance, approve=args.approve
+        )
     except (OSError, ValueError, json.JSONDecodeError) as exc:
         print(str(exc), file=sys.stderr)
         return 2

@@ -22,13 +22,15 @@ scicap = "scicap_core.cli:main"
 
 [tool.setuptools]
 include-package-data = true
-packages = ["scicap_core", "scicap"]
+packages = ["scicap_core", "scicap_core.capabilities", "scicap"]
 
 [tool.setuptools.package-dir]
 scicap_core = "packages/scicap-core"
+"scicap_core.capabilities" = "packages/scicap-neuro/capabilities"
 
 [tool.setuptools.package-data]
 scicap_core = ["result.schema.json"]
+"scicap_core.capabilities" = ["*.yaml"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
